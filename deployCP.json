@@ -43,12 +43,12 @@
         "srcControlsName": "web",
         "customApiName": "CPMgmgtApi",
         "connectorName": "cp-mgmt-api-connector",
-        "apiName": "guomgmtapifun",
-        "serviceAPIName": "[concat(variables('apiName'), '/api')]",
-        "backendName":  "[concat(variables('apiName'), '/backend')]",
+        "apiName": "guo011",
+        "serviceAPIName": "guo011/api",
+        "backendName": "guo011/backend",
         "logicAppName": "example-checkpoint-integration"
-
     },
+    
     "resources": [
         {
             "type": "Microsoft.Web/sites",
