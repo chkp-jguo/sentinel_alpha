@@ -8,21 +8,21 @@
                 "description": "Name use as base-template to named the resources deployed in Azure."
             }
         },
-        "CheckPointManagementAPI": {
+        "CheckPointManagementServer": {
            "type": "string",
            "defaultValue": "https://10.0.0.1/web_ui",
            "metadata" : {
                 "description": "Check Point Security Management Server URL (must include /web_ui)"
             }
         },
-        "CPServerUser": {
+        "CheckPointUser": {
            "type": "string",
           "defaultValue": "admin",
            "metadata" : {
                 "description": "Admin user for Check Point Security Management Server"
             }
         },
-        "CPServerPassword": {
+        "CheckPointPassword": {
            "type": "string",
            "metadata" : {
                 "description": "Admin user Password for the Check Point Security Management Server"
@@ -79,8 +79,8 @@
                             "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('funcStorageName'), ';AccountKey=', listKeys(variables('funcStorageName'),'2019-06-01').keys[0].value,';EndpointSuffix=core.windows.net')]"
                         },
                         {
-                            "name": "CP_MGMT_API",
-                            "value": "[parameters('CheckPointManagementAPI')]"
+                            "name": "CP_MGMT_SERVER",
+                            "value": "[parameters('CheckPointManagementServer')]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -425,8 +425,8 @@
                         "login": {
                             "inputs": {
                                 "body": {
-                                    "password": "[parameters('CPServerPassword')]",
-                                    "user": "[parameters('CPServerUser')]"
+                                    "password": "[parameters('CheckPointPassword')]",
+                                    "user": "[parameters('CheckPointUser')]"
                                 },
                                 "headers": {
                                     "Content-Type": " application/json"
