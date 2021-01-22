@@ -16,8 +16,4 @@ put detail on what it does
 
 * instruction on how to set it up
 
-[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/chkp-jguo/sentinel_alpha/main/deployCP.json)
-
-
-[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fchrisbeckett%2Fdome9-teams-connector%2Fmaster%2Fdeployment-template.json)
-
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.png)](https%3A%2F%2Fportal.azure.com%2F%23create%2FMicrosoft.Template%2Furi%2Fhttps%3A%2F%2Fraw.githubusercontent.com%2Fchkp-jguo%2Fsentinel_alpha%2Fmain%2FdeployCP.json)
