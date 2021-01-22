@@ -8,29 +8,29 @@
                 "description": "Name use as base-template to named the resources deployed in Azure."
             }
         },
-        "GitHubBranch": {
-           "type": "string",
-           "defaultValue": "master",
-           "metadata": {
-                "description": "Name of the branch to use when deploying (Default = master)."
-            }
-        },
-        "CheckPointManagementAPI": {
+        "CheckPointManagementServer": {
            "type": "string",
            "metadata" : {
                 "description": "URL to Check Point Management server API"
             }
         },
-        "CPServerUser": {
+        "CheckPointUser": {
            "type": "string",
            "metadata" : {
                 "description": "Administrator user for the Check Point Management server"
             }
         },
-        "CPServerPassword": {
+        "CheckPointPassword": {
            "type": "string",
            "metadata" : {
                 "description": "Password for the Check Point Management server"
+            }
+        },
+        "GitHubBranch": {
+           "type": "string",
+           "defaultValue": "master",
+           "metadata": {
+                "description": "Name of the branch to use when deploying (Default = master)."
             }
         }
     },
