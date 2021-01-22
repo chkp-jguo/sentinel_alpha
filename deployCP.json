@@ -10,12 +10,14 @@
         },
         "CheckPointManagementServer": {
            "type": "string",
+           "defaultValue": "https://10.0.0.1/web_ui",
            "metadata" : {
                 "description": "URL to Check Point Management server API"
             }
         },
         "CheckPointUser": {
            "type": "string",
+           "defaultValue": "admin",
            "metadata" : {
                 "description": "Administrator user for the Check Point Management server"
             }
@@ -41,9 +43,9 @@
         "serverFarmName": "[concat(substring(parameters('baseName'), 0, min(length(parameters('baseName')),14)), '-srv-', variables('suffix'))]",
         "repoURL": "https://github.com/chkp-ivanmar/az-func-dummy-proxy.git",
         "srcControlsName": "web",
-        "customApiName": "CPMgmgtApi",
-        "connectorName": "cp-mgmt-api-connector",
-        "apiName": "guo011",
+        "customApiName": "checkpoint-mgmt-api",
+        "connectorName": "checkpoint-mgmt-api-connector",
+        "apiName": "checkpoint-mgmt-api-svc",
         "serviceAPIName": "[concat(variables('apiName'), '/api')]",
         "backendName": "[concat(variables('apiName'), '/backend')]",
         "logicAppName": "example-checkpoint-integration"
@@ -432,7 +434,7 @@
                                 },
                                 "host": {
                                     "connection": {
-                                        "name": "@parameters('$connections')['CPMgmgtApi']['connectionId']"
+                                        "name": "@parameters('$connections')['checkpoint-mgmt-api']['connectionId']"
                                     }
                                 },
                                 "method": "post",
@@ -450,7 +452,7 @@
                                 },
                                 "host": {
                                     "connection": {
-                                        "name": "@parameters('$connections')['CPMgmgtApi']['connectionId']"
+                                        "name": "@parameters('$connections')['checkpoint-mgmt-api']['connectionId']"
                                     }
                                 },
                                 "method": "post",
@@ -469,7 +471,7 @@
                 "parameters": {
                     "$connections": {
                         "value": {
-                            "CPMgmgtApi": {
+                            "checkpoint-mgmt-api": {
                                 "connectionId": "[resourceId('Microsoft.Web/connections', variables('connectorName'))]",
                                 "connectionName": "[variables('connectorName')]",
                                 "id": "[resourceId('Microsoft.Web/customApis', variables('customApiName'))]"
