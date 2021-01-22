@@ -79,7 +79,7 @@
                         },
                         {
                             "name": "CP_MGMT_API",
-                            "value": "[parameters('CheckPointManagementAPI')]"
+                            "value": "[parameters('CheckPointManagementServer')]"
                         },
                         {
                             "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -424,8 +424,8 @@
                         "login": {
                             "inputs": {
                                 "body": {
-                                    "password": "[parameters('CPServerPassword')]",
-                                    "user": "[parameters('CPServerUser')]"
+                                    "password": "[parameters('CheckPointPassword')]",
+                                    "user": "[parameters('CheckPointUser')]"
                                 },
                                 "headers": {
                                     "Content-Type": " application/json"
