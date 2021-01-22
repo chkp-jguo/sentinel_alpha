@@ -44,8 +44,8 @@
         "customApiName": "CPMgmgtApi",
         "connectorName": "cp-mgmt-api-connector",
         "apiName": "guomgmtapifun",
-        "serviceAPIName": "[toLower(concat(parameters('apiName'), variables('suffix')))/api]",
-        "backendName": "[toLower(concat(parameters('apiName'), variables('suffix')))/backend]",
+        "serviceAPIName": "[toLower(concat(parameters('apiName')/api]",
+        "backendName": "[toLower(concat(parameters('apiName'),))/backend]",
         "logicAppName": "example-checkpoint-integration"
 
     },
