@@ -51,8 +51,8 @@
         "srcControlsName": "web",
         "customApiName": "cp-mgmt-api-connector",
         "connectorName": "cp-mgmt-api-connection",
-        "apiName": "[toLower(concat(parameters('baseName'), '-api-', variables('suffix')))]",
-        "serviceAPIName": "cp-mgmt-api-svc/api",
+        "apiName": "[toLower(concat(parameters('baseName')))]",
+        "serviceAPIName": "[toLower(concat(parameters('baseName'), '/api', variables('suffix')))]",
         "logicAppName": "example-checkpoint-integration"
     },
     
