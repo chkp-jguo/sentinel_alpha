@@ -39,8 +39,8 @@
     "variables": {
         "suffix": "[substring(toLower(uniqueString(resourceGroup().id, resourceGroup().location)),0,5)]",
         "funcAppName": "[toLower(concat(parameters('baseName'), '-proxy-', variables('suffix')))]",
-        "funcStorageName": "[tolower(concat(substring(parameters('baseName'), 0, min(length(parameters('baseName')),16)), 'storage', variables('suffix')))]",
-        "serverFarmName": "[concat(substring(parameters('baseName'), 0, min(length(parameters('baseName')),14)), '-srv-', variables('suffix'))]",
+        "funcStorageName": "[tolower(concat(substring(parameters('baseName'), 0, min(length(parameters('baseName')),16)), variables('suffix')))]",
+        "serverFarmName": "[concat(substring(parameters('baseName'), 0, min(length(parameters('baseName')),14)), variables('suffix'))]",
         "repoURL": "https://github.com/chkp-ivanmar/az-func-dummy-proxy.git",
         "srcControlsName": "web",
         "customApiName": "cp-mgmt-api-connector",
