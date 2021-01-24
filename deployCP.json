@@ -17213,18 +17213,6 @@
                 "definitions": {},
                 "parameters": {},
                 "responses": {},
-                "securityDefinitions": {
-                  "API Key": {
-                    "type": "apiKey",
-                    "in": "header",
-                    "name": "x-functions-key"
-                  }
-                },
-                "security": [
-                  {
-                    "API Key": []
-                  }
-                ],
                 "tags": []
          }
             }
