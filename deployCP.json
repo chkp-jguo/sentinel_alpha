@@ -10,7 +10,7 @@
         },
         "CheckPointManagementServer": {
            "type": "string",
-           "defaultValue": "https://10.0.0.1/web_ui",
+           "defaultValue": "https://10.0.0.1/web_api",
            "metadata" : {
                 "description": "URL to Check Point Management server API"
             }
@@ -168,7 +168,7 @@
                 "[resourceId('Microsoft.Web/customApis',variables('customApiName'))]"
             ],
             "properties": {
-                "displayName": "Connector for Check Point custom API",
+                "displayName": "Check Point Management API",
                 "api": {
                     "id": "[resourceId('Microsoft.Web/customApis', variables('customApiName'))]"
                 }
