@@ -10,7 +10,7 @@
         },
         "CheckPointManagementServer": {
            "type": "string",
-           "defaultValue": "https://10.0.0.1/web_api",
+           "defaultValue": "https://10.0.0.1/web_api/",
            "metadata" : {
                 "description": "URL to Check Point Management server API"
             }
