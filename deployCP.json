@@ -497,7 +497,7 @@
             "properties": {
             "description": "Configure and view the security policy and objects in a Security Management Server or Multi Domain Server using CLI tools and web-services.",
             "connectionParameters": {},
-            "displayName": "CP Automation Management API",
+            "displayName": "[toLower(concat(parameters('baseName'), '-cpmgmt-connector'))]",
             "iconUri": "https://raw.githubusercontent.com/chkp-jguo/sentinel_alpha/main/cp_logo_01.png",
             "backendService": {
                 "serviceUrl": "[concat('https://', variables('apiName'),'.azure-api.net/', variables('funcAppName'))]"
@@ -1442,253 +1442,262 @@
                         }
                       }
                     },
-                    "/add-host" : {
-                      "post" : {
-                        "summary" : "add-host-with-NAT-hide",
-                        "description" : "Adds simple host with NAT",
-                        "operationId" : "Add-host-with-NAT-hide",
-                        "parameters" : [ {
-                          "name" : "Content-Type",
-                          "in" : "header",
-                          "required" : true,
-                          "type" : "string",
-                          "default" : " application/json",
-                          "description" : "Content-Type"
-                        }, {
-                          "name" : "X-chkp-sid",
-                          "in" : "header",
-                          "required" : true,
-                          "type" : "string",
-                          "default" : " {{session}}",
-                          "description" : "X-chkp-sid"
-                        }, {
-                          "name" : "body",
-                          "in" : "body",
-                          "schema" : {
-                            "type" : "object",
-                            "properties" : {
-                              "name" : {
-                                "type" : "string",
-                                "description" : "name"
-                              },
-                              "ip-address" : {
-                                "type" : "string",
-                                "description" : "ip-address"
-                              },
-                              "nat-settings" : {
-                                "type" : "object",
-                                "properties" : {
-                                  "auto-rule" : {
-                                    "type" : "boolean",
-                                    "description" : "auto-rule"
-                                  },
-                                  "method" : {
-                                    "type" : "string",
-                                    "description" : "method"
-                                  },
-                                  "hide-behind" : {
-                                    "type" : "string",
-                                    "description" : "hide-behind"
-                                  },
-                                  "ipv4-address" : {
-                                    "type" : "string",
-                                    "description" : "ipv4-address"
-                                  },
-                                  "ipv6-address" : {
-                                    "type" : "string",
-                                    "description" : "ipv6-address"
-                                  },
-                                  "install-on" : {
-                                    "type" : "string",
-                                    "description" : "install-on"
-                                  }
-                                },
-                                "description" : "nat-settings"
-                              }
-                            },
-                            "default" : {
-                              "name" : "New Host 3",
-                              "ip-address" : "192.0.2.162",
-                              "nat-settings" : {
-                                "auto-rule" : true,
-                                "method" : "hide",
-                                "hide-behind" : "ip-address",
-                                "ipv4-address" : "192.0.2.1",
-                                "ipv6-address" : "FE80::0202:B3FF:FE1E:8329",
-                                "install-on" : "All"
-                              }
-                            }
-                          },
-                          "required" : true
-                        } ],
-                        "responses" : {
-                          "200" : {
-                            "description" : "200",
-                            "schema" : {
-                              "type" : "object",
-                              "properties" : {
-                                "uid" : {
-                                  "type" : "string",
-                                  "description" : "uid"
-                                },
-                                "folder" : {
-                                  "type" : "object",
-                                  "properties" : {
-                                    "uid" : {
-                                      "type" : "string",
-                                      "description" : "uid"
+                        "/add-host": {
+                            "post": {
+                                "summary": "add-host",
+                                "description": "Adds simple host",
+                                "operationId": "Add-host",
+                                "parameters": [
+                                    {
+                                        "name": "Content-Type",
+                                        "in": "header",
+                                        "required": true,
+                                        "type": "string",
+                                        "default": " application/json",
+                                        "description": "Content-Type"
                                     },
-                                    "name" : {
-                                      "type" : "string",
-                                      "description" : "name"
-                                    }
-                                  },
-                                  "description" : "folder"
-                                },
-                                "domain" : {
-                                  "type" : "object",
-                                  "properties" : {
-                                    "domain-type" : {
-                                      "type" : "string",
-                                      "description" : "domain-type"
+                                    {
+                                        "name": "X-chkp-sid",
+                                        "in": "header",
+                                        "required": true,
+                                        "type": "string",
+                                        "default": " {{session_id}}",
+                                        "description": "X-chkp-sid"
                                     },
-                                    "uid" : {
-                                      "type" : "string",
-                                      "description" : "uid"
-                                    },
-                                    "name" : {
-                                      "type" : "string",
-                                      "description" : "name"
-                                    }
-                                  },
-                                  "description" : "domain"
-                                },
-                                "meta-info" : {
-                                  "type" : "object",
-                                  "properties" : {
-                                    "lock" : {
-                                      "type" : "string",
-                                      "description" : "lock"
-                                    },
-                                    "validation-state" : {
-                                      "type" : "string",
-                                      "description" : "validation-state"
-                                    },
-                                    "read-only" : {
-                                      "type" : "boolean",
-                                      "description" : "read-only"
-                                    },
-                                    "last-modify-time" : {
-                                      "type" : "object",
-                                      "properties" : {
-                                        "posix" : {
-                                          "type" : "integer",
-                                          "format" : "int32",
-                                          "description" : "posix"
+                                    {
+                                        "name": "body",
+                                        "in": "body",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string",
+                                                    "description": "name"
+                                                },
+                                                "ip-address": {
+                                                    "type": "string",
+                                                    "description": "ip-address"
+                                                },
+                                                "nat-settings": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "auto-rule": {
+                                                            "type": "boolean",
+                                                            "description": "auto-rule"
+                                                        },
+                                                        "method": {
+                                                            "type": "string",
+                                                            "description": "method"
+                                                        },
+                                                        "hide-behind": {
+                                                            "type": "string",
+                                                            "description": "hide-behind"
+                                                        },
+                                                        "ipv4-address": {
+                                                            "type": "string",
+                                                            "description": "ipv4-address"
+                                                        },
+                                                        "ipv6-address": {
+                                                            "type": "string",
+                                                            "description": "ipv6-address"
+                                                        },
+                                                        "install-on": {
+                                                            "type": "string",
+                                                            "description": "install-on"
+                                                        }
+                                                    },
+                                                    "description": "nat-settings"
+                                                },
+                                                "ignore-warnings": {
+                                                    "type": "boolean",
+                                                    "description": "ignore-warnings"
+                                                }
+                                            },
+                                            "default": {
+                                                "name": "New Host 3",
+                                                "ip-address": "192.0.2.162",
+                                                "nat-settings": {
+                                                    "auto-rule": true,
+                                                    "method": "hide",
+                                                    "hide-behind": "ip-address",
+                                                    "ipv4-address": "192.0.2.1",
+                                                    "ipv6-address": "FE80::0202:B3FF:FE1E:8329",
+                                                    "install-on": "All"
+                                                },
+                                                "ignore-warnings": true
+                                            }
                                         },
-                                        "iso-8601" : {
-                                          "type" : "string",
-                                          "description" : "iso-8601"
-                                        }
-                                      },
-                                      "description" : "last-modify-time"
-                                    },
-                                    "last-modifier" : {
-                                      "type" : "string",
-                                      "description" : "last-modifier"
-                                    },
-                                    "creation-time" : {
-                                      "type" : "object",
-                                      "properties" : {
-                                        "posix" : {
-                                          "type" : "integer",
-                                          "format" : "int32",
-                                          "description" : "posix"
-                                        },
-                                        "iso-8601" : {
-                                          "type" : "string",
-                                          "description" : "iso-8601"
-                                        }
-                                      },
-                                      "description" : "creation-time"
-                                    },
-                                    "creator" : {
-                                      "type" : "string",
-                                      "description" : "creator"
+                                        "required": true
                                     }
-                                  },
-                                  "description" : "meta-info"
-                                },
-                                "tags" : {
-                                  "type" : "array",
-                                  "items" : { },
-                                  "description" : "tags"
-                                },
-                                "name" : {
-                                  "type" : "string",
-                                  "description" : "name"
-                                },
-                                "comments" : {
-                                  "type" : "string",
-                                  "description" : "comments"
-                                },
-                                "color" : {
-                                  "type" : "string",
-                                  "description" : "color"
-                                },
-                                "icon" : {
-                                  "type" : "string",
-                                  "description" : "icon"
-                                },
-                                "groups" : {
-                                  "type" : "array",
-                                  "items" : { },
-                                  "description" : "groups"
-                                },
-                                "nat-settings" : {
-                                  "type" : "object",
-                                  "properties" : {
-                                    "auto-rule" : {
-                                      "type" : "boolean",
-                                      "description" : "auto-rule"
-                                    },
-                                    "ipv4-address" : {
-                                      "type" : "string",
-                                      "description" : "ipv4-address"
-                                    },
-                                    "ipv6-address" : {
-                                      "type" : "string",
-                                      "description" : "ipv6-address"
-                                    },
-                                    "hide-behind" : {
-                                      "type" : "string",
-                                      "description" : "hide-behind"
-                                    },
-                                    "method" : {
-                                      "type" : "string",
-                                      "description" : "method"
-                                    },
-                                    "install-on" : {
-                                      "type" : "string",
-                                      "description" : "install-on"
+                                ],
+                                "responses": {
+                                    "200": {
+                                        "description": "200",
+                                        "schema": {
+                                            "type": "object",
+                                            "properties": {
+                                                "uid": {
+                                                    "type": "string",
+                                                    "description": "uid"
+                                                },
+                                                "folder": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "uid": {
+                                                            "type": "string",
+                                                            "description": "uid"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "description": "name"
+                                                        }
+                                                    },
+                                                    "description": "folder"
+                                                },
+                                                "domain": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "domain-type": {
+                                                            "type": "string",
+                                                            "description": "domain-type"
+                                                        },
+                                                        "uid": {
+                                                            "type": "string",
+                                                            "description": "uid"
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "description": "name"
+                                                        }
+                                                    },
+                                                    "description": "domain"
+                                                },
+                                                "meta-info": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "lock": {
+                                                            "type": "string",
+                                                            "description": "lock"
+                                                        },
+                                                        "validation-state": {
+                                                            "type": "string",
+                                                            "description": "validation-state"
+                                                        },
+                                                        "read-only": {
+                                                            "type": "boolean",
+                                                            "description": "read-only"
+                                                        },
+                                                        "last-modify-time": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "posix": {
+                                                                    "type": "integer",
+                                                                    "format": "int32",
+                                                                    "description": "posix"
+                                                                },
+                                                                "iso-8601": {
+                                                                    "type": "string",
+                                                                    "description": "iso-8601"
+                                                                }
+                                                            },
+                                                            "description": "last-modify-time"
+                                                        },
+                                                        "last-modifier": {
+                                                            "type": "string",
+                                                            "description": "last-modifier"
+                                                        },
+                                                        "creation-time": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "posix": {
+                                                                    "type": "integer",
+                                                                    "format": "int32",
+                                                                    "description": "posix"
+                                                                },
+                                                                "iso-8601": {
+                                                                    "type": "string",
+                                                                    "description": "iso-8601"
+                                                                }
+                                                            },
+                                                            "description": "creation-time"
+                                                        },
+                                                        "creator": {
+                                                            "type": "string",
+                                                            "description": "creator"
+                                                        }
+                                                    },
+                                                    "description": "meta-info"
+                                                },
+                                                "tags": {
+                                                    "type": "array",
+                                                    "items": {},
+                                                    "description": "tags"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "description": "name"
+                                                },
+                                                "comments": {
+                                                    "type": "string",
+                                                    "description": "comments"
+                                                },
+                                                "color": {
+                                                    "type": "string",
+                                                    "description": "color"
+                                                },
+                                                "icon": {
+                                                    "type": "string",
+                                                    "description": "icon"
+                                                },
+                                                "groups": {
+                                                    "type": "array",
+                                                    "items": {},
+                                                    "description": "groups"
+                                                },
+                                                "nat-settings": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "auto-rule": {
+                                                            "type": "boolean",
+                                                            "description": "auto-rule"
+                                                        },
+                                                        "ipv4-address": {
+                                                            "type": "string",
+                                                            "description": "ipv4-address"
+                                                        },
+                                                        "ipv6-address": {
+                                                            "type": "string",
+                                                            "description": "ipv6-address"
+                                                        },
+                                                        "hide-behind": {
+                                                            "type": "string",
+                                                            "description": "hide-behind"
+                                                        },
+                                                        "method": {
+                                                            "type": "string",
+                                                            "description": "method"
+                                                        },
+                                                        "install-on": {
+                                                            "type": "string",
+                                                            "description": "install-on"
+                                                        }
+                                                    },
+                                                    "description": "nat-settings"
+                                                },
+                                                "ipv4-address": {
+                                                    "type": "string",
+                                                    "description": "ipv4-address"
+                                                },
+                                                "ipv6-address": {
+                                                    "type": "string",
+                                                    "description": "ipv6-address"
+                                                }
+                                            }
+                                        }
                                     }
-                                  },
-                                  "description" : "nat-settings"
-                                },
-                                "ipv4-address" : {
-                                  "type" : "string",
-                                  "description" : "ipv4-address"
-                                },
-                                "ipv6-address" : {
-                                  "type" : "string",
-                                  "description" : "ipv6-address"
                                 }
-                              }
                             }
-                          }
-                        }
-                      }
-                    },
+                        },
                     "/delete-access-layer" : {
                       "post" : {
                         "summary" : "delete-access-layer",
@@ -9400,13 +9409,6 @@
                           "type" : "string",
                           "default" : " application/json",
                           "description" : "Content-Type"
-                        }, {
-                          "name" : "Ses",
-                          "in" : "header",
-                          "required" : true,
-                          "type" : "string",
-                          "default" : " ",
-                          "description" : "Ses"
                         }, {
                           "name" : "X-chkp-sid",
                           "in" : "header",
