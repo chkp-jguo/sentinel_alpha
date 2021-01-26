@@ -381,12 +381,112 @@
                             "type": "Request",
                             "kind": "Http",
                             "inputs": {
-                                "schema": {}
+                                "schema": {
+                                    "properties": {
+                                        "add-host": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "group-name": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
                             }
                         }
                     },
                     "actions": {
-                        "Parse_JSON": {
+                        "Add_Host_to_Group": {
+                            "foreach": "@body('Parse_Request')?['add-host']",
+                            "actions": {
+                                "set-group": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "members": {
+                                                "add": "sentinel_@{items('Add_Host_to_Group')}"
+                                            },
+                                            "name": "@body('Parse_Request')?['set-group']"
+                                        },
+                                        "headers": {
+                                            "Content-Type": " application/json",
+                                            "X-chkp-sid": "@body('Parse_Login')?['sid']"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['checkpoint-mgmt-api']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/set-group"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Create_Host": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach"
+                        },
+                        "Create_Host": {
+                            "foreach": "@body('Parse_Request')?['add-host']",
+                            "actions": {
+                                "add-host": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "ignore-warnings": true,
+                                            "ip-address": "@{items('Create_Host')}",
+                                            "name": "sentinel_@{items('Create_Host')}"
+                                        },
+                                        "headers": {
+                                            "Content-Type": " application/json",
+                                            "X-chkp-sid": "@body('Parse_Login')?['sid']"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['checkpoint-mgmt-api']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/add-host"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Parse_Login": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Foreach"
+                        },
+                        "Delay": {
+                            "runAfter": {
+                                "publish": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Wait",
+                            "inputs": {
+                                "interval": {
+                                    "count": 10,
+                                    "unit": "Second"
+                                }
+                            }
+                        },
+                        "Parse_Login": {
+                            "runAfter": {
+                                "login": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ParseJson",
                             "inputs": {
                                 "content": "@body('login')",
                                 "schema": {
@@ -420,15 +520,36 @@
                                     },
                                     "type": "object"
                                 }
-                            },
+                            }
+                        },
+                        "Parse_Request": {
+                            "runAfter": {},
+                            "type": "ParseJson",
+                            "inputs": {
+                                "content": "@triggerBody()",
+                                "schema": {
+                                    "properties": {
+                                        "add-host": {
+                                            "items": {
+                                                "type": "string"
+                                            },
+                                            "type": "array"
+                                        },
+                                        "set-group": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "login": {
                             "runAfter": {
-                                "login": [
+                                "Parse_Request": [
                                     "Succeeded"
                                 ]
                             },
-                            "type": "ParseJson"
-                        },
-                        "login": {
+                            "type": "ApiConnection",
                             "inputs": {
                                 "body": {
                                     "password": "[parameters('CheckPointPassword')]",
@@ -444,16 +565,20 @@
                                 },
                                 "method": "post",
                                 "path": "/login"
-                            },
-                            "runAfter": {},
-                            "type": "ApiConnection"
+                            }
                         },
-                        "show-commands": {
+                        "logout": {
+                            "runAfter": {
+                                "Delay": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
                             "inputs": {
                                 "body": {},
                                 "headers": {
                                     "Content-Type": " application/json",
-                                    "X-chkp-sid": "@body('Parse_JSON')?['sid']"
+                                    "X-chkp-sid": "@body('Parse_Login')?['sid']"
                                 },
                                 "host": {
                                     "connection": {
@@ -461,14 +586,30 @@
                                     }
                                 },
                                 "method": "post",
-                                "path": "/show-commands"
-                            },
+                                "path": "/logout"
+                            }
+                        },
+                        "publish": {
                             "runAfter": {
-                                "Parse_JSON": [
+                                "Add_Host_to_Group": [
                                     "Succeeded"
                                 ]
                             },
-                            "type": "ApiConnection"
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {},
+                                "headers": {
+                                    "Content-Type": " application/json",
+                                    "X-chkp-sid": "@body('Parse_Login')?['sid']"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['checkpoint-mgmt-api']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/publish"
+                            }
                         }
                     },
                     "outputs": {}
