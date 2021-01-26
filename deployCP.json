@@ -10225,41 +10225,53 @@
                         }
                       }
                     },
-                    "/publish" : {
-                      "post" : {
-                        "summary" : "publish",
-                        "description" : "Publish the last changes. Use the show-task command to check the progress of the task.",
-                        "operationId" : "Publish",
-                        "parameters" : [ {
-                          "name" : "Content-Type",
-                          "in" : "header",
-                          "required" : true,
-                          "type" : "string",
-                          "default" : " application/json",
-                          "description" : "Content-Type"
-                        }, {
-                          "name" : "X-chkp-sid",
-                          "in" : "header",
-                          "required" : true,
-                          "type" : "string",
-                          "default" : " {{session}}",
-                          "description" : "X-chkp-sid"
-                        } ],
-                        "responses" : {
-                          "200" : {
-                            "description" : "200",
-                            "schema" : {
-                              "type" : "object",
-                              "properties" : {
-                                "task-id" : {
-                                  "type" : "string",
-                                  "description" : "task-id"
+                    "/publish": {
+                        "post": {
+                            "summary": "publish",
+                            "description": "Publish the last changes. Use the show-task command to check the progress of the task.",
+                            "operationId": "Publish",
+                            "parameters": [
+                                {
+                                    "name": "Content-Type",
+                                    "in": "header",
+                                    "required": true,
+                                    "type": "string",
+                                    "default": " application/json",
+                                    "description": "Content-Type"
+                                },
+                                {
+                                    "name": "X-chkp-sid",
+                                    "in": "header",
+                                    "required": true,
+                                    "type": "string",
+                                    "default": " {{session_id}}",
+                                    "description": "X-chkp-sid"
+                                },
+                                {
+                                    "name": "body",
+                                    "in": "body",
+                                    "schema": {
+                                        "type": "object",
+                                        "default": "{}"
+                                    },
+                                    "required": true
                                 }
-                              }
+                            ],
+                            "responses": {
+                                "200": {
+                                    "description": "200",
+                                    "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "task-id": {
+                                                "type": "string",
+                                                "description": "task-id"
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                          }
                         }
-                      }
                     },
                     "/add-service-udp" : {
                       "post" : {
