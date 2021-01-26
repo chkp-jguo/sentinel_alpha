@@ -168,7 +168,7 @@
                 "[resourceId('Microsoft.Web/customApis',variables('customApiName'))]"
             ],
             "properties": {
-                "displayName": "Check Point Management API",
+                "displayName": "Connector for Check Point custom API",
                 "api": {
                     "id": "[resourceId('Microsoft.Web/customApis', variables('customApiName'))]"
                 }
