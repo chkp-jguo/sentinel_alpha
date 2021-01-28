@@ -466,19 +466,186 @@
                             },
                             "type": "Foreach"
                         },
-                        "Delay": {
+                        "Gateway1_VAR": {
                             "runAfter": {
-                                "publish": [
+                                "Parse_Request": [
                                     "Succeeded"
                                 ]
                             },
-                            "type": "Wait",
+                            "type": "InitializeVariable",
                             "inputs": {
-                                "interval": {
-                                    "count": 10,
-                                    "unit": "Second"
-                                }
+                                "variables": [
+                                    {
+                                        "name": "gateway1",
+                                        "type": "string",
+                                        "value": "r8040gw"
+                                    }
+                                ]
                             }
+                        },
+                        "Gateway2_VAR": {
+                            "runAfter": {
+                                "Gateway1_VAR": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "gateway2",
+                                        "type": "string",
+                                        "value": "r8040gw_01"
+                                    }
+                                ]
+                            }
+                        },
+                        "InstallPolicy_VAR": {
+                            "runAfter": {
+                                "Publish_status_check": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "InstallPolicyStatus",
+                                        "type": "integer",
+                                        "value": 0
+                                    }
+                                ]
+                            }
+                        },
+                        "Install_Policy_status_check": {
+                            "actions": {
+                                "Install_Policy_status": {
+                                    "foreach": "@body('Parse_show-task_install-policy')?['tasks']",
+                                    "actions": {
+                                        "Install_policy_condition": {
+                                            "actions": {
+                                                "Set_InstallPolicy_VAR": {
+                                                    "runAfter": {},
+                                                    "type": "SetVariable",
+                                                    "inputs": {
+                                                        "name": "InstallPolicyStatus",
+                                                        "value": 1
+                                                    }
+                                                }
+                                            },
+                                            "runAfter": {},
+                                            "else": {
+                                                "actions": {
+                                                    "Delay_3_seconds": {
+                                                        "runAfter": {},
+                                                        "type": "Wait",
+                                                        "inputs": {
+                                                            "interval": {
+                                                                "count": 2,
+                                                                "unit": "Second"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "expression": {
+                                                "and": [
+                                                    {
+                                                        "equals": [
+                                                            "@items('Install_Policy_status')?['progress-percentage']",
+                                                            100
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "type": "If"
+                                        }
+                                    },
+                                    "runAfter": {
+                                        "Parse_show-task_install-policy": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Foreach"
+                                },
+                                "Parse_show-task_install-policy": {
+                                    "runAfter": {
+                                        "show-task_install-policy": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ParseJson",
+                                    "inputs": {
+                                        "content": "@body('show-task_install-policy')",
+                                        "schema": {
+                                            "properties": {
+                                                "tasks": {
+                                                    "items": {
+                                                        "properties": {
+                                                            "progress-percentage": {
+                                                                "type": "integer"
+                                                            },
+                                                            "status": {
+                                                                "type": "string"
+                                                            },
+                                                            "suppressed": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "task-id": {
+                                                                "type": "string"
+                                                            },
+                                                            "task-name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "task-id",
+                                                            "task-name",
+                                                            "status",
+                                                            "progress-percentage",
+                                                            "suppressed"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "show-task_install-policy": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "task-id": "@body('Parse_install-policy')?['task-id']"
+                                        },
+                                        "headers": {
+                                            "Content-Type": " application/json",
+                                            "X-chkp-sid": "@body('Parse_Login')?['sid']"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['checkpoint-mgmt-api']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/show-task"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Parse_install-policy": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "expression": "@equals(variables('InstallPolicyStatus'), 1)",
+                            "limit": {
+                                "count": 60,
+                                "timeout": "PT1H"
+                            },
+                            "type": "Until"
                         },
                         "Parse_Login": {
                             "runAfter": {
@@ -543,9 +710,241 @@
                                 }
                             }
                         },
+                        "Parse_install-policy": {
+                            "runAfter": {
+                                "install-policy": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ParseJson",
+                            "inputs": {
+                                "content": "@body('install-policy')",
+                                "schema": {
+                                    "properties": {
+                                        "task-id": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "Parse_publish": {
+                            "runAfter": {
+                                "publish": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ParseJson",
+                            "inputs": {
+                                "content": "@body('publish')",
+                                "schema": {
+                                    "properties": {
+                                        "task-id": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        },
+                        "Policy-Package_VAR": {
+                            "runAfter": {
+                                "Gateway2_VAR": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "policy-package",
+                                        "type": "string",
+                                        "value": "Standard"
+                                    }
+                                ]
+                            }
+                        },
+                        "PublishStatus_VAR": {
+                            "runAfter": {
+                                "Add_Host_to_Group": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "PublishStatus",
+                                        "type": "integer",
+                                        "value": 0
+                                    }
+                                ]
+                            }
+                        },
+                        "Publish_status_check": {
+                            "actions": {
+                                "Parse_show-task_publish": {
+                                    "runAfter": {
+                                        "show-task_publish": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "ParseJson",
+                                    "inputs": {
+                                        "content": "@body('show-task_publish')",
+                                        "schema": {
+                                            "properties": {
+                                                "tasks": {
+                                                    "items": {
+                                                        "properties": {
+                                                            "progress-percentage": {
+                                                                "type": "integer"
+                                                            },
+                                                            "status": {
+                                                                "type": "string"
+                                                            },
+                                                            "suppressed": {
+                                                                "type": "boolean"
+                                                            },
+                                                            "task-id": {
+                                                                "type": "string"
+                                                            },
+                                                            "task-name": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "task-id",
+                                                            "task-name",
+                                                            "status",
+                                                            "progress-percentage",
+                                                            "suppressed"
+                                                        ],
+                                                        "type": "object"
+                                                    },
+                                                    "type": "array"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "Publish_status": {
+                                    "foreach": "@body('Parse_show-task_publish')?['tasks']",
+                                    "actions": {
+                                        "Publish_status_condition": {
+                                            "actions": {
+                                                "Set_PublishStatus_VAR": {
+                                                    "runAfter": {},
+                                                    "type": "SetVariable",
+                                                    "inputs": {
+                                                        "name": "PublishStatus",
+                                                        "value": 1
+                                                    }
+                                                }
+                                            },
+                                            "runAfter": {},
+                                            "else": {
+                                                "actions": {
+                                                    "Delay_2_seconds": {
+                                                        "runAfter": {},
+                                                        "type": "Wait",
+                                                        "inputs": {
+                                                            "interval": {
+                                                                "count": 2,
+                                                                "unit": "Second"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "expression": {
+                                                "and": [
+                                                    {
+                                                        "equals": [
+                                                            "@items('Publish_status')?['progress-percentage']",
+                                                            100
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "type": "If"
+                                        }
+                                    },
+                                    "runAfter": {
+                                        "Parse_show-task_publish": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Foreach"
+                                },
+                                "show-task_publish": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "task-id": "@body('Parse_publish')?['task-id']"
+                                        },
+                                        "headers": {
+                                            "Content-Type": " application/json",
+                                            "X-chkp-sid": "@body('Parse_Login')?['sid']"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['checkpoint-mgmt-api']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/show-task"
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Parse_publish": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "expression": "@equals(variables('PublishStatus'), 1)",
+                            "limit": {
+                                "count": 60,
+                                "timeout": "PT1H"
+                            },
+                            "type": "Until"
+                        },
+                        "install-policy": {
+                            "runAfter": {
+                                "InstallPolicy_VAR": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "access": true,
+                                    "policy-package": "@variables('policy-package')",
+                                    "targets": [
+                                        "@variables('gateway1')",
+                                        "@variables('gateway2')"
+                                    ],
+                                    "threat-prevention": true
+                                },
+                                "headers": {
+                                    "Content-Type": " application/json",
+                                    "X-chkp-sid": "@body('Parse_Login')?['sid']"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['checkpoint-mgmt-api']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/install-policy"
+                            }
+                        },
                         "login": {
                             "runAfter": {
-                                "Parse_Request": [
+                                "Policy-Package_VAR": [
                                     "Succeeded"
                                 ]
                             },
@@ -569,7 +968,7 @@
                         },
                         "logout": {
                             "runAfter": {
-                                "Delay": [
+                                "Install_Policy_status_check": [
                                     "Succeeded"
                                 ]
                             },
@@ -591,7 +990,7 @@
                         },
                         "publish": {
                             "runAfter": {
-                                "Add_Host_to_Group": [
+                                "PublishStatus_VAR": [
                                     "Succeeded"
                                 ]
                             },
