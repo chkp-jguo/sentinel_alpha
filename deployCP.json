@@ -111,7 +111,7 @@
                     "properties": {
                         "RepoUrl": "[variables('repoURL')]",
                         "branch": "[parameters('GitHubBranch')]",
-                        "IsManualIntegrEtion": true
+                        "IsManualIntegration": true
                     }
                 }
             ]
